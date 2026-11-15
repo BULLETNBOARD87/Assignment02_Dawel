@@ -18,6 +18,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -34,6 +37,8 @@ public class CarRaceController implements Initializable {
     private boolean isStopped = false;
     private CarRaceModel model;
     private final List<TranslateTransition> activeAnimations = new ArrayList<>();
+    
+    private Car[] cars;
 
 
     @FXML
@@ -64,6 +69,33 @@ public class CarRaceController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         speedDisplay.textProperty().bind(simulationSlider.valueProperty().asString("%.2f" + "x"));
         model = new CarRaceModel(resultsArea);
+
+        cars = new Car[]{
+            replaceWithCar(car01, 1),
+            replaceWithCar(car02, 2),
+            replaceWithCar(car03, 3),
+            replaceWithCar(car04, 4)
+        };
+    }
+    
+    /**
+     * Replaces a placeholder rectangle with a car.
+     * @param placeholder the rectangle to replace.
+     * @param number the number on the car.
+     * @return a car.
+     */
+    private Car replaceWithCar(Rectangle placeholder, int number) {
+        Paint fill = placeholder.getFill();
+        Color color = (fill instanceof Color) ? (Color) fill : Color.GRAY;
+
+        Car car = new Car(number, color);
+        car.setLayoutX(placeholder.getLayoutX());
+        car.setLayoutY(placeholder.getLayoutY());
+
+        Pane parent = (Pane) placeholder.getParent();
+        parent.getChildren().remove(placeholder);
+        parent.getChildren().add(car);
+        return car;
     }
 
     @FXML
