@@ -117,7 +117,7 @@ public class CarRaceController implements Initializable {
     public void startRaceAnimation(Rectangle car, Random random, int min, int max) {
         int randomRange = random.nextInt((max - min) + 1) + min;
 
-        TranslateTransition transition = new TranslateTransition(Duration.millis(50), car);
+        TranslateTransition transition = new TranslateTransition(stepDuration(), car);
         transition.setByX(randomRange);
         transition.setCycleCount(1);
 
@@ -142,6 +142,7 @@ public class CarRaceController implements Initializable {
             } else {
                 int nextStep = random.nextInt((max - min) + 1) + min;
                 transition.setByX(nextStep);
+                transition.setDuration(stepDuration());
                 transition.play();
             }
         });
@@ -151,12 +152,22 @@ public class CarRaceController implements Initializable {
 
     /**
      * Sets each car back to the start. 
+     * @param cars the collection of cars to reset the position of. 
      */
     public void resetRacePositions(Node... cars) {
         for (Node car : cars) {
             car.setTranslateX(0);
             car.setTranslateY(0);
         }
+    }
+    
+    /**'
+     * Divides the duration of each step by the simulation speed slider.
+     * @return The duration of each step. 
+     */
+    private Duration stepDuration() {
+        double speed = Math.max(0.05, simulationSlider.getValue()); 
+        return Duration.millis(50 / speed);
     }
 
 }
