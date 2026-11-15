@@ -19,6 +19,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 /**
@@ -27,8 +29,11 @@ import javafx.util.Duration;
  * @author 2548213
  */
 public class CarRaceController implements Initializable {
-    private boolean isRaceOver = false;
-    private boolean isStopped = false; 
+    private static final double FINISH_X = 540;
+    private static final int TOTAL_CARS = 4;
+
+    private boolean isStopped = false;
+    private CarRaceModel model;
     private final List<TranslateTransition> activeAnimations = new ArrayList<>();
 
 
@@ -43,6 +48,8 @@ public class CarRaceController implements Initializable {
     @FXML
     private Button startButton;
     @FXML
+    private TextArea resultsArea;
+    @FXML
     private Button stopButton;
     @FXML
     private Button resetSimulation;
@@ -56,27 +63,28 @@ public class CarRaceController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         speedDisplay.textProperty().bind(simulationSlider.valueProperty().asString("%.2f" + "x"));
-    }    
-    
+        speedDisplay.textProperty().bind(simulationSlider.valueProperty().asString("%.2f" + "x"));
+        model = new CarRaceModel(resultsArea);
+    }
+
     @FXML
     private void startSimulation(ActionEvent event) {
-        if (!activeAnimations.isEmpty() && !isStopped) {
+        if (model.allFinished(TOTAL_CARS) || (!activeAnimations.isEmpty() && !isStopped)) {
             return;
         }
 
         isStopped = false;
-        isRaceOver = false;
         activeAnimations.clear();
 
         Random random = new Random();
         int min = 1;
         int max = 10;
 
-        startRaceAnimation(car01, random, min, max);
-        startRaceAnimation(car02, random, min, max);
-        startRaceAnimation(car03, random, min, max);
-        startRaceAnimation(car04, random, min, max);
+        for (Rectangle car : new Rectangle[]{car01, car02, car03, car04}) {
+            if (!model.isFinished(car)) {  
+                startRaceAnimation(car, random, min, max);
+            }
+        }
     }
 
     @FXML
@@ -94,10 +102,19 @@ public class CarRaceController implements Initializable {
         for (TranslateTransition t : activeAnimations) {
             t.stop();
         }
+        activeAnimations.clear();
+        model.reset();
         resetRacePositions(car01, car02, car03, car04);
     }
-    
-    public void startRaceAnimation(Node car, Random random, int min, int max) {
+
+    /**
+     * Starts moving a car.
+     * @param car the car to start moving.
+     * @param random The random number generator.
+     * @param min minimum pixels moved.
+     * @param max maximum pixels moved.
+     */
+    public void startRaceAnimation(Rectangle car, Random random, int min, int max) {
         int randomRange = random.nextInt((max - min) + 1) + min;
 
         TranslateTransition transition = new TranslateTransition(Duration.millis(50), car);
@@ -107,45 +124,38 @@ public class CarRaceController implements Initializable {
         activeAnimations.add(transition);
 
         transition.setOnFinished(e -> {
-            if (isRaceOver || isStopped) { 
+            if (isStopped) {
                 return;
             }
 
-            TranslateTransition activeTransition = (TranslateTransition) e.getSource();
             double currentX = car.getLayoutX() + car.getTranslateX();
 
-            if (currentX >= 540) {
-                isRaceOver = true; 
-
-                activeTransition.stop(); 
-                System.out.println(car.getId() + " HAS WON THE RACE!");
-
-                for (TranslateTransition t : activeAnimations) {
-                    t.stop();
+            if (currentX >= FINISH_X) {
+                boolean isWinner = model.recordFinish(car);
+                if (isWinner) {
+                    model.announceWinner();
                 }
-
-                activeAnimations.clear(); 
-
+                if (model.allFinished(TOTAL_CARS)) {
+                    model.showFinalResults();
+                    activeAnimations.clear();
+                }
             } else {
-               
-                if (!isRaceOver) {
-                    int nextStep = random.nextInt((max - min) + 1) + min;
-                    activeTransition.setByX(nextStep);
-                    activeTransition.play();
-                }
+                int nextStep = random.nextInt((max - min) + 1) + min;
+                transition.setByX(nextStep);
+                transition.play();
             }
         });
 
         transition.play();
     }
-    
-    public void resetRacePositions(Node... cars) {
-        isRaceOver = false;
-        activeAnimations.clear();
 
+    /**
+     * Sets each car back to the start. 
+     */
+    public void resetRacePositions(Node... cars) {
         for (Node car : cars) {
             car.setTranslateX(0);
-            car.setTranslateY(0); 
+            car.setTranslateY(0);
         }
     }
 
