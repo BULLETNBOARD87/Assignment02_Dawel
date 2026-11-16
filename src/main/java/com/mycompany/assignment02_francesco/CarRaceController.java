@@ -111,8 +111,8 @@ public class CarRaceController implements Initializable {
         int min = 1;
         int max = 10;
 
-        for (Rectangle car : new Rectangle[]{car01, car02, car03, car04}) {
-            if (!model.isFinished(car)) {  
+        for (Car car : cars) {                      
+            if (!model.isFinished(car)) {
                 startRaceAnimation(car, random, min, max);
             }
         }
@@ -135,7 +135,9 @@ public class CarRaceController implements Initializable {
         }
         activeAnimations.clear();
         model.reset();
-        resetRacePositions(car01, car02, car03, car04);
+        for (Car car : cars) {                      
+            car.reset();
+        }
     }
 
     /**
@@ -145,7 +147,7 @@ public class CarRaceController implements Initializable {
      * @param min minimum pixels moved.
      * @param max maximum pixels moved.
      */
-    public void startRaceAnimation(Rectangle car, Random random, int min, int max) {
+    public void startRaceAnimation(Car car, Random random, int min, int max) {
         int randomRange = random.nextInt((max - min) + 1) + min;
 
         TranslateTransition transition = new TranslateTransition(stepDuration(), car);

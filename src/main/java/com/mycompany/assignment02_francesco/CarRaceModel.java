@@ -20,7 +20,7 @@ import javafx.scene.shape.Rectangle;
 public class CarRaceModel {
     
     private final TextArea resultsArea;
-    private final List<Rectangle> finishOrder = new ArrayList<>();
+    private final List<Car> finishOrder = new ArrayList<>();
     
     private static final Map<String, Color> KNOWN_COLORS = new LinkedHashMap<>();
     static {
@@ -50,7 +50,7 @@ public class CarRaceModel {
      * @param car The car that passes the finish line.
      * @return Returns true if it was the first one to do it.
      */
-    public boolean recordFinish(Rectangle car) {
+    public boolean recordFinish(Car car) {
         if (finishOrder.contains(car)) {
             return false;
         }
@@ -58,7 +58,7 @@ public class CarRaceModel {
         return finishOrder.size() == 1;
     }
     
-    public boolean isFinished(Rectangle car) {
+    public boolean isFinished(Car car) {
         return finishOrder.contains(car);
     }
 
@@ -73,8 +73,8 @@ public class CarRaceModel {
         if (finishOrder.isEmpty()) {
             return;
         }
-        Rectangle winner = finishOrder.get(0);
-        resultsArea.setText("?CONGRATULATIONS!\n"
+        Car winner = finishOrder.get(0);
+        resultsArea.setText("CONGRATULATIONS!\n"
                 + describe(winner) + " wins the race!\n");
     }
     
@@ -94,11 +94,11 @@ public class CarRaceModel {
         resultsArea.clear();
     }
     
-    private String describe(Rectangle car) {
-        return "Car " + carNumber(car) + " (" + colorName(car.getFill()) + ")";
+    private String describe(Car car) {
+        return "Car " + car.getNumber() + " (" + colorName(car.getColor()) + ")";
     }
     
-    private int carNumber(Rectangle car) {
+    private int carNumber(Car car) {
         String digits = car.getId() == null ? "" : car.getId().replaceAll("\\D+", "");
         return digits.isEmpty() ? 0 : Integer.parseInt(digits);
     }
