@@ -89,11 +89,19 @@ public class CarRaceModel {
         resultsArea.appendText(sb.toString());
     }
 
+    /**
+     * Resets both the results text area and the finishing order.
+     */
     public void reset() {
         finishOrder.clear();
         resultsArea.clear();
     }
     
+    /**
+     * Describes the car's number and color.
+     * @param car The car.
+     * @return A string describing the number and color.
+     */
     private String describe(Car car) {
         return "Car " + car.getNumber() + " (" + colorName(car.getColor()) + ")";
     }
@@ -103,6 +111,11 @@ public class CarRaceModel {
         return digits.isEmpty() ? 0 : Integer.parseInt(digits);
     }
     
+    /**
+     * Gets the best approximation of the color of the car.
+     * @param paint The color of the car.
+     * @return The best approximation.
+     */
     private String colorName(Paint paint) {
         if (!(paint instanceof Color)) {
             return "Unknown";
@@ -124,6 +137,12 @@ public class CarRaceModel {
         return best;
     }
     
+    /**
+     * Returns the place based on the number given.
+     * eg: n=4, return "4th".
+     * @param n the number.
+     * @return the place.
+     */
     private String ordinal(int n) {
         switch (n) {
             case 1: return "1st";

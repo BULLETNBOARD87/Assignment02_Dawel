@@ -70,6 +70,13 @@ public class Car extends Group {
         });
     }
 
+    /**
+     * Creates a wheel and a line that spins. 
+     * @param cx center of the wheel's X position.
+     * @param cy center of the wheel's Y position.
+     * @param rotation a rotation animation.
+     * @return 
+     */
     private Group createWheel(double cx, double cy, Rotate rotation) {
         Circle tire = new Circle(cx, cy, WHEEL_RADIUS, Color.DARKSLATEGRAY);
         tire.setStroke(Color.BLACK);

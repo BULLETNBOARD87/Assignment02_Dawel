@@ -136,6 +136,7 @@ public class SlideshowController implements Initializable {
             Scene scene = carPane.getScene();
             scene.setRoot(root);
             ((Stage) scene.getWindow()).sizeToScene();
+            ((Stage) scene.getWindow()).setTitle("Car Race Simulation");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
