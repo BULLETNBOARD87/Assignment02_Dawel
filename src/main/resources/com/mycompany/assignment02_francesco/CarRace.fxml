@@ -37,8 +37,7 @@
             <Rectangle fx:id="car04" arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="38.0" layoutX="3.0" layoutY="167.0" stroke="BLACK" strokeType="INSIDE" width="55.0" />
          </children>
     </AnchorPane>
-
-    <!-- Bottom half: controls card (left) + results card (right) -->
+    
     <HBox prefHeight="173.0" prefWidth="600.0" spacing="12.0" styleClass="bottom-area">
        <children>
           <VBox prefWidth="290.0" spacing="22.0" styleClass="panel" HBox.hgrow="ALWAYS">
