@@ -71,8 +71,8 @@ public class CarRaceController implements Initializable {
         model = new CarRaceModel(resultsArea);
 
         cars = new Car[]{
-            replaceWithCar(car01, 1),
-            replaceWithCar(car02, 2),
+            replaceWithCar(car01, 7),
+            replaceWithCar(car02, 1),
             replaceWithCar(car03, 3),
             replaceWithCar(car04, 4)
         };
